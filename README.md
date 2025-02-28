@@ -4,7 +4,7 @@
 
 ## 🔗 Live Demo
 
-🎯 **Lihat dashboard di sini:** [Bike Sharing Analysis Dashboard](https://submiappinanalysisdicoding-hcgtzziiqudxyerrulfmje.streamlit.app/)
+🎯 **Lihat dashboard di sini:** [Bike Sharing Analysis Dashboard](https://submissionanalysisdicoding-buegwara5actjikcjjseck.streamlit.app/)
 
 ## 📂 Dataset
 
