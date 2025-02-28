@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Load data
 @st.cache_data
@@ -32,11 +34,27 @@ st.subheader("📈 Tren Penyewaan Sepeda")
 fig_trend = px.line(filtered_df, x='dteday', y='cnt', title="Tren Penyewaan Sepeda Harian", labels={'cnt': 'Jumlah Penyewaan'})
 st.plotly_chart(fig_trend, use_container_width=True)
 
-# Analisis Cuaca vs Penyewaan
+# Analisis Cuaca vs Penyewaan (Menggunakan Bar Chart)
 st.subheader("🌤️ Pengaruh Cuaca terhadap Penyewaan")
-fig_weather = px.box(filtered_df, x='weathersit', y='cnt', title="Distribusi Penyewaan Berdasarkan Cuaca",
-                      labels={'cnt': 'Jumlah Penyewaan', 'weathersit': 'Kondisi Cuaca'})
+
+# Menghitung rata-rata penyewaan berdasarkan kondisi cuaca
+weather_rentals = filtered_df.groupby('weathersit')['cnt'].mean().reset_index()
+
+# Membuat bar chart
+fig_weather = px.bar(
+    weather_rentals, 
+    x='weathersit', 
+    y='cnt', 
+    title="Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca",
+    labels={'cnt': 'Rata-rata Jumlah Penyewaan', 'weathersit': 'Kondisi Cuaca'},
+    color='weathersit', 
+    category_orders={'weathersit': ['1', '2', '3']},
+    color_discrete_map={'1': 'blue', '2': 'orange', '3': 'red'}
+)
+
+# Menampilkan chart di Streamlit
 st.plotly_chart(fig_weather, use_container_width=True)
+
 
 # Perbandingan Hari Kerja vs Akhir Pekan
 st.subheader("📊 Perbandingan Penyewaan: Hari Kerja vs Akhir Pekan")
@@ -44,6 +62,15 @@ filtered_df['is_weekend'] = filtered_df['weekday'].apply(lambda x: 'Weekend' if 
 fig_weekend = px.bar(filtered_df.groupby('is_weekend')['cnt'].mean().reset_index(), x='is_weekend', y='cnt',
                      title="Rata-rata Penyewaan Sepeda: Weekday vs Weekend", labels={'cnt': 'Jumlah Penyewaan'})
 st.plotly_chart(fig_weekend, use_container_width=True)
+
+# Analisis Penyewaan Berdasarkan Hari dalam Seminggu (Pengganti Heatmap)
+st.subheader("📅 Tren Penyewaan Berdasarkan Hari")
+weekday_rentals = filtered_df.groupby('weekday')['cnt'].mean().reset_index()
+fig_weekday = px.bar(weekday_rentals, x='weekday', y='cnt',
+                     title="Rata-rata Penyewaan Sepeda Berdasarkan Hari dalam Seminggu",
+                     labels={'cnt': 'Jumlah Penyewaan', 'weekday': 'Hari dalam Seminggu'},
+                     category_orders={'weekday': ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']})
+st.plotly_chart(fig_weekday, use_container_width=True)
 
 # Clustering Manual
 st.subheader("🔍 Clustering Penggunaan Sepeda")
